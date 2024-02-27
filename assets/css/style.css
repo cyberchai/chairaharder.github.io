@@ -11,8 +11,8 @@
 body {
   font-family: "Open Sans", sans-serif;
   background-color: #040404; 
-  /*background-color: #FF0000; */
-  color: #fff;
+  /* background-color: #FF0000; */
+  color: #ffffff;
   position: relative;
   background: transparent;
 }
@@ -27,6 +27,7 @@ body::before {
   top: 0;
   height: 100vh;
   z-index: -1;
+  /* border-radius: 5%; */
 }
 
 @media (min-width: 1024px) {
@@ -73,7 +74,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 #header h1 {
-  font-size: 48px;
+  font-size: 84px;
   margin: 0;
   padding: 0;
   line-height: 1;
@@ -82,13 +83,13 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 #header h1 a, #header h1 a:hover {
-  color: #fff;
+  color: #ffffff;
   line-height: 1;
   display: inline-block;
 }
 
 #header h2 {
-  font-size: 24px;
+  font-size: 34px;
   margin-top: 20px;
   color: rgba(255, 255, 255, 0.8);
 }
@@ -110,7 +111,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 #header .social-links a {
-  font-size: 16px;
+  font-size: 36px;  /* pictures inside of the social link buttons. default is 16px */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -119,8 +120,8 @@ h1, h2, h3, h4, h5, h6 {
   line-height: 1;
   margin-right: 8px;
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
+  width: 70px;
+  height: 70px;
 }
 
 #header .social-links a:hover {
@@ -215,7 +216,7 @@ h1, h2, h3, h4, h5, h6 {
   justify-content: space-between;
   padding: 0;
   font-family: "Poppins", sans-serif;
-  font-size: 16px;
+  font-size: 36px;
   font-weight: 400;
   color: rgba(255, 255, 255, 0.7);
   white-space: nowrap;
@@ -237,9 +238,10 @@ h1, h2, h3, h4, h5, h6 {
   left: 0;
   background-color: #79c4e8;
   visibility: hidden;
-  width: 0px;
+  width: 10px;
   transition: all 0.3s ease-in-out 0s;
 }
+
 
 .navbar a:hover:before, .navbar li:hover > a:before, .navbar .active:before {
   visibility: visible;
@@ -343,6 +345,7 @@ section.section-show {
 section .container {
   background: rgba(0, 0, 0, 0.9);
   padding: 30px;
+  /* border-radius: 10%; */
 }
 
 @media (max-width: 768px) {
@@ -390,7 +393,7 @@ section .container {
 --------------------------------------------------------------*/
 .about-me .content h3 {
   font-weight: 700;
-  font-size: 26px;
+  font-size: 46px;
   color: #79c4e8;
 }
 
@@ -410,7 +413,7 @@ section .container {
 }
 
 .about-me .content ul i {
-  font-size: 16px;
+  font-size: 36px;
   margin-right: 5px;
   color: #79c4e8;
   line-height: 0;
@@ -418,6 +421,10 @@ section .container {
 
 .about-me .content p:last-child {
   margin-bottom: 0;
+}
+
+.about-me .content p{
+  font-size: 26px;;
 }
 
 /*--------------------------------------------------------------
