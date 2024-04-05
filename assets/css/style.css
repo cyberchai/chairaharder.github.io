@@ -15,6 +15,11 @@ body {
   color: #ffffff;
   position: relative;
   background: transparent;
+  cursor: url("assets/img/icons8-boxing-glove-64.png"), default;
+}
+
+html {
+  cursor: url("assets/img/icons8-boxing-glove-64.png"), default;
 }
 
 body::before {
@@ -54,6 +59,9 @@ h1, h2, h3, h4, h5, h6 {
     display: none;
 }
 
+/* .custom-cursor {
+  cursor: url('assets/img/icons8-boxing-glove-64.png'), auto;
+} */
 
 
 /*--------------------------------------------------------------
