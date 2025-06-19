@@ -334,7 +334,7 @@ h1, h2, h3, h4, h5, h6 {
 --------------------------------------------------------------*/
 section {
   overflow: hidden;
-  position: absolute;
+  position: absolute; /* changed from: absolute*/
   width: 100%;
   top: 140px;
   bottom: 100%;
@@ -765,6 +765,20 @@ section .container {
   margin-bottom: 30px;
 }
 
+/*
+#portfolio {
+  position: relative !important;
+  overflow: visible !important;
+}
+*/
+/*
+video.img-fluid {
+  display: block;
+  width: 100%;
+  height: auto;
+} */
+
+
 .portfolio #portfolio-flters {
   padding: 0;
   margin: 0 auto 15px auto;
@@ -800,7 +814,7 @@ section .container {
 .portfolio .portfolio-wrap {
   transition: 0.3s;
   position: relative;
-  overflow: hidden;
+  overflow: hidden; /* changed from original: hidden */
   z-index: 1;
   background: rgba(0, 0, 0, 0.6);
 }
