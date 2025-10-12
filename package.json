@@ -1,0 +1,16 @@
+{
+  "name": "chairaharder-ingest",
+  "version": "1.0.0",
+  "description": "Local ingestion tooling for Chaira Harder's Supabase vector store.",
+  "type": "module",
+  "scripts": {
+    "ingest": "node ingest.mjs"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.43.4",
+    "dotenv": "^16.4.5",
+    "node-fetch": "^3.3.2",
+    "openai": "^4.28.4",
+    "pdf-parse": "^1.1.1"
+  }
+}

@@ -1,0 +1,33 @@
+name: Run Ingestion
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run ingest script
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          URL_SUPABASE: ${{ secrets.URL_SUPABASE }}
+          SERVICE_ROLE_KEY_SUPABASE: ${{ secrets.SERVICE_ROLE_KEY_SUPABASE }}
+          EMBED_MODEL: ${{ secrets.EMBED_MODEL }}
+        run: npm run ingest

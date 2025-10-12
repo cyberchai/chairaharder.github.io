@@ -1,0 +1,121 @@
+Ingestion script (run locally on your laptop)
+This loads your resume (PDF), your About Me markdown/text, and (optionally) your website pages into the DB. Run it whenever you update content.
+Create a small Node project locally:
+mkdir kai-rag-ingest && cd kai-rag-ingest
+npm init -y
+npm i openai pdf-parse node-fetch@3 @supabase/supabase-js
+.env
+OPENAI_API_KEY=sk-...
+SUPABASE_URL=https://YOUR-PROJECT.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=...
+EMBED_MODEL=text-embedding-3-small
+ingest.mjs
+import 'dotenv/config';
+import fs from 'fs';
+import fetch from 'node-fetch';
+import pdf from 'pdf-parse';
+import OpenAI from 'openai';
+import { createClient } from '@supabase/supabase-js';
+
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
+
+function splitIntoChunks(text, maxChars = 4000, overlap = 400) {
+  const chunks = [];
+  let i = 0;
+  while (i < text.length) {
+    const end = Math.min(i + maxChars, text.length);
+    const chunk = text.slice(i, end);
+    chunks.push(chunk);
+    i = end - overlap;
+    if (i < 0) i = 0;
+  }
+  return chunks;
+}
+
+async function embedBatch(texts) {
+  const res = await openai.embeddings.create({
+    model: process.env.EMBED_MODEL || 'text-embedding-3-small',
+    input: texts
+  });
+  return res.data.map(d => d.embedding);
+}
+
+async function upsertDocWithEmbedding(content, meta, embedding) {
+  const { data: doc, error: e1 } = await supabase
+    .from('documents')
+    .insert({ ...meta, content })
+    .select('id')
+    .single();
+  if (e1) throw e1;
+
+  const { error: e2 } = await supabase
+    .from('document_embeddings')
+    .insert({ document_id: doc.id, embedding });
+  if (e2) throw e2;
+}
+
+async function ingestResume(pdfPath) {
+  const buff = fs.readFileSync(pdfPath);
+  const parsed = await pdf(buff);
+  const chunks = splitIntoChunks(parsed.text);
+  const embeddings = await embedBatch(chunks);
+  for (let i = 0; i < chunks.length; i++) {
+    await upsertDocWithEmbedding(chunks[i], {
+      source: 'resume', title: 'Resume', section: `chunk-${i+1}`, url: '/resume.pdf'
+    }, embeddings[i]);
+  }
+  console.log('Resume ingested.');
+}
+
+async function ingestAbout(pathOrText) {
+  const text = fs.existsSync(pathOrText) ? fs.readFileSync(pathOrText, 'utf8') : pathOrText;
+  const chunks = splitIntoChunks(text);
+  const embeddings = await embedBatch(chunks);
+  for (let i = 0; i < chunks.length; i++) {
+    await upsertDocWithEmbedding(chunks[i], {
+      source: 'about', title: 'About Me', section: `chunk-${i+1}`, url: '/about'
+    }, embeddings[i]);
+  }
+  console.log('About ingested.');
+}
+
+async function ingestWebsite(urls) {
+  // Simple: pass a list of important page URLs manually
+  const pages = [];
+  for (const url of urls) {
+    const html = await (await fetch(url)).text();
+    const text = html
+      .replace(/<script[\s\S]*?<\/script>/gi, '')
+      .replace(/<style[\s\S]*?<\/style>/gi, '')
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    pages.push({ url, title: url, text });
+  }
+
+  for (const p of pages) {
+    const chunks = splitIntoChunks(p.text);
+    const embeddings = await embedBatch(chunks);
+    for (let i = 0; i < chunks.length; i++) {
+      await upsertDocWithEmbedding(chunks[i], {
+        source: 'website', title: p.title, section: `chunk-${i+1}`, url: p.url
+      }, embeddings[i]);
+    }
+  }
+  console.log('Website ingested.');
+}
+
+(async () => {
+  await ingestResume('./Chaira_Harder_Resume.pdf');      // put your PDF next to this script
+  await ingestAbout('./about-me.md');                    // or pass a string you paste
+  await ingestWebsite([
+    'https://<your-gh-pages-domain>/',
+    'https://<your-gh-pages-domain>/projects',
+    'https://<your-gh-pages-domain>/about'
+  ]);
+  console.log('✅ Ingest complete');
+})();
+Run it:
+node ingest.mjs
