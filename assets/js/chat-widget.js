@@ -225,8 +225,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const bubble = document.createElement('div');
     bubble.className = `askchaira-bubble ${role}`;
     
-    // Parse markdown and convert to HTML
-    const htmlContent = parseMarkdown(text);
+    const htmlContent = role === 'assistant'
+      ? mdToHtml(text)
+      : escapeHtml(text).replace(/\n/g, '<br>');
     bubble.innerHTML = htmlContent;
     
     messagesEl.appendChild(bubble);
@@ -235,31 +236,39 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 
-  function parseMarkdown(text) {
-    // Simple markdown parser for common formatting
-    let html = text
-      // Bold text: **text** or __text__
-      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-      .replace(/__(.*?)__/g, '<strong>$1</strong>')
-      // Italic text: *text* or _text_
-      .replace(/\*(.*?)\*/g, '<em>$1</em>')
-      .replace(/_(.*?)_/g, '<em>$1</em>')
-      // Code: `code`
-      .replace(/`(.*?)`/g, '<code>$1</code>')
-      // Links: [text](url)
-      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
-      // Line breaks: \n to <br>
-      .replace(/\n/g, '<br>')
-      // Lists: - item or * item
-      .replace(/^[\s]*[-*]\s+(.+)$/gm, '<li>$1</li>')
-      // Wrap consecutive list items in <ul>
-      .replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>')
-      // Headers: # Header, ## Header, etc.
-      .replace(/^### (.*$)/gm, '<h3>$1</h3>')
-      .replace(/^## (.*$)/gm, '<h2>$1</h2>')
-      .replace(/^# (.*$)/gm, '<h1>$1</h1>');
-    
-    return html;
+  function escapeHtml(input) {
+    return (input ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function mdToHtml(text) {
+    const escaped = escapeHtml(text);
+    if (!escaped) {
+      return '<p></p>';
+    }
+
+    let html = escaped;
+
+    html = html.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, (_match, label, url) => {
+      return `<a href="${url}" target="_blank" rel="noopener">${label}</a>`;
+    });
+
+    html = html.replace(/(^|[\s>])(https?:\/\/[^\s<]+)/g, (_match, prefix, url) => {
+      return `${prefix}<a href="${url}" target="_blank" rel="noopener">${url}</a>`;
+    });
+
+    html = html.replace(/\[#(\d+)\]/g, (_match, num) => `<sup class="cite">[${num}]</sup>`);
+
+    const paragraphs = html.split(/\n{2,}/);
+    const withParagraphs = paragraphs
+      .map((paragraph) => paragraph.replace(/\n/g, '<br>'))
+      .map((paragraph) => `<p>${paragraph}</p>`);
+
+    return withParagraphs.join('') || '<p></p>';
   }
 
   function setStatus(text) {

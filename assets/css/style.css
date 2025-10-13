@@ -1340,29 +1340,20 @@ video.img-fluid {
 
 .askchaira-bubble a {
   color: #79c4e8;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.2rem 0.4rem;
-  border-radius: 12px;
-  background: rgba(121, 196, 232, 0.1);
-  border: 1px solid rgba(121, 196, 232, 0.3);
-  transition: all 0.2s ease;
-  font-size: 0.9em;
-  margin: 0 0.1rem;
+  text-decoration: underline;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  font-size: 0.95em;
 }
 
 .askchaira-bubble a:hover {
-  color: #5a9bc4;
-  background: rgba(121, 196, 232, 0.2);
-  border-color: rgba(121, 196, 232, 0.5);
+  color: #9ad4f1;
 }
 
-.askchaira-bubble a::before {
-  content: "🔗";
-  font-size: 0.8em;
-  opacity: 0.8;
+.askchaira-bubble sup.cite {
+  font-size: 0.75em;
+  color: rgba(255, 255, 255, 0.6);
+  margin-left: 0.1rem;
 }
 
 .askchaira-bubble ul {
@@ -1534,9 +1525,24 @@ video.img-fluid {
   }
 }
 
+@media (max-width: 630px) {
+  #header .social-links {
+    flex-wrap: wrap;
+  }
+
+  #header .social-links .askchaira-widget {
+    flex: 1 1 100%;
+    width: 100%;
+    max-width: 100%;
+    margin-top: 16px;
+    order: 2;
+  }
+}
+
 @media (max-width: 540px) {
   .askchaira-widget {
-    max-width: 280px;
+    max-width: 100%;
+    width: 100%;
   }
   
   .askchaira-toggle {
