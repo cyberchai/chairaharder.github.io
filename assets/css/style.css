@@ -1300,6 +1300,8 @@ video.img-fluid {
   line-height: 1.4;
   white-space: pre-wrap;
   word-break: break-word;
+  overflow-wrap: break-word;
+  min-width: 0;
 }
 
 .askchaira-bubble.user {
@@ -1311,6 +1313,10 @@ video.img-fluid {
   border: 1px solid rgba(255, 255, 255, 0.1);
   margin-left: 2.3rem;
   box-shadow: 0 0 25px rgba(121, 196, 232, 0.3);
+}
+
+.askchaira-bubble.user sup.cite {
+  color: rgba(0, 0, 0, 0.7);
 }
 
 .askchaira-bubble.assistant {
@@ -1341,9 +1347,12 @@ video.img-fluid {
 .askchaira-bubble a {
   color: #79c4e8;
   text-decoration: underline;
-  word-break: break-word;
-  overflow-wrap: anywhere;
+  word-break: break-all;
+  overflow-wrap: break-word;
   font-size: 0.95em;
+  display: inline-block;
+  max-width: 100%;
+  hyphens: none;
 }
 
 .askchaira-bubble a:hover {
@@ -1351,9 +1360,13 @@ video.img-fluid {
 }
 
 .askchaira-bubble sup.cite {
-  font-size: 0.75em;
-  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.7em;
+  color: #666666;
   margin-left: 0.1rem;
+  font-weight: normal;
+  vertical-align: super;
+  line-height: 1;
+  text-decoration: none;
 }
 
 .askchaira-bubble ul {
@@ -1382,6 +1395,20 @@ video.img-fluid {
 
 .askchaira-bubble h3 {
   font-size: 1.05em;
+}
+
+.askchaira-bubble p {
+  margin: 0.5rem 0;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.askchaira-bubble p:first-child {
+  margin-top: 0;
+}
+
+.askchaira-bubble p:last-child {
+  margin-bottom: 0;
 }
 
 .askchaira-status {
