@@ -93,13 +93,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <a href="https://www.instagram.com/chairaharder/" target="_blank" class="instagram"><i class="bi bi-instagram"></i></a>
         <a href="https://ca.linkedin.com/in/chaira-harder-7617a5189" target="_blank" class="linkedin"><i class="bi bi-linkedin"></i></a>
         <a href="assets/img/ChairaHarderResume.pdf" class="download" download="ChairaHarderResume.pdf"><i class="bi bi-download"></i></a>
-        <!-- Add askChaira widget here: same formatting as the social link buttons, but longer horizontal radius.
-         and have placeholder questions examples:
-          "What is Chaira's primary tech stack?"
-          "Is Chaira available for a dinner meeting on December 10th?"
-          "What experience does Chaira have in finance technology?"
-          "How many countries has Chaira lived in?"
-         -->
+        
+        <!-- Ask Chaira Widget -->
+        <div class="askchaira-widget" data-supabase-url="https://hagspidzsbmiesblwsjt.supabase.co" data-anon-key="">
+          <input type="text" class="askchaira-toggle" placeholder="Ask Chaira..." aria-expanded="false">
+          <div class="askchaira-overlay" hidden>
+            <button type="button" class="askchaira-close" aria-label="Close chat">×</button>
+            <div class="askchaira-messages" data-askchaira-messages></div>
+            <div class="askchaira-status" data-askchaira-status></div>
+          </div>
+        </div>
       </div>
 
     </div>
@@ -1332,24 +1335,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
   <script src="assets/vendor/waypoints/noframework.waypoints.js"></script>
 
-  <div class="askchaira-widget" data-supabase-url="https://hagspidzsbmiesblwsjt.supabase.co" data-anon-key="">
-    <button type="button" class="askchaira-toggle" aria-expanded="false">Ask Chaira</button>
-    <div class="askchaira-panel" hidden>
-      <div class="askchaira-header">
-        <span>Ask Chaira</span>
-        <button type="button" class="askchaira-close" aria-label="Close chat">×</button>
-      </div>
-      <div class="askchaira-messages" data-askchaira-messages></div>
-      <div class="askchaira-status" data-askchaira-status></div>
-      <form class="askchaira-form" data-askchaira-form novalidate>
-        <label for="askchaira-input" class="visually-hidden">Ask Chaira</label>
-        <textarea id="askchaira-input" class="askchaira-input" name="message" rows="2" placeholder="Ask me about my work…" required></textarea>
-        <button type="submit" class="askchaira-submit" data-askchaira-submit>Send</button>
-      </form>
-    </div>
-  </div>
   <script src="assets/js/main.js"></script>
-  <script src="assets/js/chat-widget.js" defer></script>
+  <script src="assets/js/chat-widget.js"></script>
   <!-- Custom Analytics Tracking -->
   <script src="assets/js/analytics.js"></script>
 

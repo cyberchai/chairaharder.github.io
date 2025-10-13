@@ -116,6 +116,8 @@ h1, h2, h3, h4, h5, h6 {
 #header .social-links {
   margin-top: 40px;
   display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 #header .social-links a {
@@ -126,10 +128,10 @@ h1, h2, h3, h4, h5, h6 {
   background: rgba(255, 255, 255, 0.1);
   color: #fff;
   line-height: 1;
-  margin-right: 8px;
   border-radius: 50%;
   width: 70px;
   height: 70px;
+  flex-shrink: 0;
 }
 
 #header .social-links a:hover {
@@ -1204,86 +1206,97 @@ video.img-fluid {
 # Ask Chaira Widget
 --------------------------------------------------------------*/
 .askchaira-widget {
-  position: fixed;
-  right: 24px;
-  bottom: 24px;
-  z-index: 99999;
+  position: relative;
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 12px;
-  font-family: "Open Sans", sans-serif;
+  flex: 1;
+  max-width: 465px;
+  font-family: "Poppins", sans-serif;
 }
 
 .askchaira-toggle {
-  background: #0d6efd;
-  color: #fff;
-  border: none;
+  background: transparent;
+  color: #ffffff;
+  border: 2px solid rgba(121, 196, 232, 0.5);
   border-radius: 999px;
-  padding: 0.65rem 1.2rem;
-  font-weight: 600;
-  box-shadow: 0 14px 30px rgba(13, 110, 253, 0.35);
-  cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  padding: 1.625rem 2.8rem;
+  font-weight: 400;
+  width: 100%;
+  font-size: 1.4rem;
+  transition: border-color 0.2s ease;
+  height: 70px;
+  box-sizing: border-box;
 }
 
 .askchaira-toggle:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 18px 36px rgba(13, 110, 253, 0.35);
+  border-color: rgba(255, 255, 255, 0.6);
 }
 
-.askchaira-toggle[aria-expanded="true"] {
-  box-shadow: 0 10px 26px rgba(13, 110, 253, 0.25);
+.askchaira-toggle:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.8);
 }
 
-.askchaira-panel {
-  width: min(320px, calc(100vw - 32px));
-  background: #fff;
-  border-radius: 18px;
-  box-shadow: 0 24px 48px rgba(15, 23, 42, 0.16);
-  overflow: hidden;
+.askchaira-toggle::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.askchaira-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 99999;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
 }
 
-.askchaira-panel[hidden] {
+.askchaira-overlay[hidden] {
   display: none;
 }
 
-.askchaira-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: #0d6efd;
-  color: #fff;
-  padding: 0.75rem 1rem;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-}
-
 .askchaira-close {
-  background: transparent;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.2);
   border: none;
-  color: inherit;
-  font-size: 1.25rem;
+  color: #fff;
+  font-size: 1.5rem;
   line-height: 1;
   cursor: pointer;
-  padding: 0;
+  padding: 0.5rem;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+}
+
+.askchaira-close:hover {
+  background: rgba(255, 255, 255, 0.3);
 }
 
 .askchaira-messages {
-  padding: 1rem 1.1rem;
+  padding: 2rem;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  max-height: 320px;
+  gap: 1rem;
+  max-height: 70vh;
   overflow-y: auto;
-  background: #f8fafc;
+  width: 100%;
+  max-width: 600px;
 }
 
 .askchaira-bubble {
   padding: 0.65rem 0.85rem;
-  border-radius: 14px;
+  border-radius: 50px;
   line-height: 1.4;
   white-space: pre-wrap;
   word-break: break-word;
@@ -1291,68 +1304,46 @@ video.img-fluid {
 
 .askchaira-bubble.user {
   align-self: flex-end;
-  background: #0d6efd;
-  color: #fff;
+  /* background: #ffffff; */
+  /* background: #79c4e8; */
+  background: rgba(121, 196, 232, 0.9);
+  color: #000000;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .askchaira-bubble.assistant {
   align-self: flex-start;
-  background: #fff;
-  color: #1f2a44;
-  border: 1px solid rgba(13, 110, 253, 0.12);
-  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+  background: #ffffff;
+  color: #000000;
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .askchaira-status {
-  font-size: 0.75rem;
-  color: #64748b;
-  text-align: center;
-  padding: 0 1rem 0.4rem 1rem;
-}
-
-.askchaira-form {
-  border-top: 1px solid rgba(13, 110, 253, 0.12);
-  padding: 0.75rem 1rem 1rem;
-  display: flex;
-  gap: 0.5rem;
-  align-items: flex-end;
-  background: #fff;
-}
-
-.askchaira-input {
-  flex: 1;
-  border: 1px solid rgba(15, 23, 42, 0.18);
-  border-radius: 12px;
-  padding: 0.55rem 0.75rem;
   font-size: 0.9rem;
-  resize: none;
-  min-height: 42px;
-  max-height: 120px;
-}
-
-.askchaira-submit {
-  background: #0d6efd;
-  color: #fff;
-  border: none;
-  border-radius: 999px;
-  padding: 0.5rem 1.1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: opacity 0.2s ease;
-}
-
-.askchaira-submit:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+  color: rgba(255, 255, 255, 0.8);
+  text-align: center;
+  padding: 1rem 2rem;
 }
 
 @media (max-width: 540px) {
   .askchaira-widget {
-    right: 16px;
-    bottom: 16px;
+    max-width: 280px;
   }
-
-  .askchaira-panel {
-    width: calc(100vw - 32px);
+  
+  .askchaira-overlay {
+    padding: 10px;
+  }
+  
+  .askchaira-messages {
+    padding: 1rem;
+    max-width: calc(100vw - 20px);
+  }
+  
+  .askchaira-close {
+    top: 10px;
+    right: 10px;
+    width: 35px;
+    height: 35px;
+    font-size: 1.2rem;
   }
 }
