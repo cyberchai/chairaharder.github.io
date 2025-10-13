@@ -10,6 +10,8 @@ document.addEventListener('DOMContentLoaded', function() {
   const closeButton = widget.querySelector('.askchaira-close');
   const messagesEl = widget.querySelector('[data-askchaira-messages]');
   const statusEl = widget.querySelector('[data-askchaira-status]');
+  const overlayInput = widget.querySelector('[data-askchaira-input-overlay]');
+  const suggestionsEl = widget.querySelector('[data-askchaira-suggestions]');
 
   console.log('Widget elements found:', {
     widget: !!widget,
@@ -19,6 +21,108 @@ document.addEventListener('DOMContentLoaded', function() {
     messagesEl: !!messagesEl,
     statusEl: !!statusEl
   });
+
+  // Cycling placeholders
+  // const placeholders = [
+  //   "What work has Chaira done related to financial tech?",
+  //   "What is Chaira's primary stack?",
+  //   "What is Chaira's experience with educational technology?",
+  //   "How long has Chaira been coding?",
+  //   "How many countries has Chaira lived in?",
+  //   "What are some of Chaira's major projects?",
+  //   "What are some awards or recognitions Chaira has received?"
+  // ];
+
+  const placeholders = [
+    "What type of apps can Chaira build?",
+    "Can Chaira manage full-stack apps",
+    "Has Chaira led developer teams?",
+    "What tools does she work with?",
+    "Where did Chaira study CS?",
+    "What projects has Chaira built?",
+    "What startups has Chaira founded?",
+    "How long has Chaira been coding?"
+  ];
+  
+  let placeholderIndex = 0;
+  
+  function cyclePlaceholder() {
+    if (toggleInput && !toggleInput.value) {
+      toggleInput.placeholder = placeholders[placeholderIndex];
+      placeholderIndex = (placeholderIndex + 1) % placeholders.length;
+    }
+  }
+  
+  // Start cycling placeholders every 3 seconds
+  setInterval(cyclePlaceholder, 3000);
+
+  // All suggestion questions for cycling
+  const allSuggestions = [
+    "How can I get in touch with Chaira?",
+    "Is Chaira more experienced in PM or SWE?",
+    "What is Chaira's latest work?",
+    "What type of projects does Chaira enjoy most?",
+    "What tech stack does Chaira use now?",
+    "Has Chaira worked with startups before?",
+    "What kind of roles interest Chaira most?",
+    "Can Chaira lead a development team?",
+    "What industries has Chaira built for?",
+    "Where can I learn more about Chaira's work?",
+    "What is Chaira currently building?",
+    "Does Chaira have experience in fintech?",
+    "Has Chaira launched any products?",
+    "What are Chaira&apos;s strongest technical skills?",
+    "How does Chaira approach problem solving?",
+    "What inspires Chaira&apos;s project ideas?",
+    "Has Chaira collaborated internationally?",
+    "What impact-focused work has she done?",
+    "How does Chaira stay up to date with tech?",
+    "What motivates Chaira as a developer?",
+    "How does Chaira approach system design?",
+    "What tradeoffs has she faced when scaling projects?",
+    "How does Chaira prioritize between speed and quality?",
+    "What&apos;s Chaira&apos;s philosophy on product-market fit?",
+    "How does she decide what features to build first?",
+    "Has Chaira managed technical debt in past builds?",
+    "How does Chaira align engineering with user needs?",
+    "What&apos;s a technical challenge she recently solved?",
+    "How does Chaira handle cross-functional collaboration?",
+    "What&apos;s Chaira&apos;s approach to validating new ideas?",
+    "Has she led a product from concept to launch?",
+    "How does Chaira measure success in her projects?",
+    "What frameworks does Chaira use for decision-making?",
+    "Has she worked with data-driven product strategy?",
+    "How does she balance innovation with reliability?"
+  ];
+  
+  
+  let suggestionSetIndex = 0;
+  
+  function cycleSuggestions() {
+    if (!suggestionsEl) return;
+    
+    // Get 4 suggestions for current set
+    const startIndex = suggestionSetIndex * 4;
+    const currentSuggestions = allSuggestions.slice(startIndex, startIndex + 4);
+    
+    // If we don't have 4 suggestions from current position, wrap around
+    if (currentSuggestions.length < 4) {
+      const remaining = 4 - currentSuggestions.length;
+      currentSuggestions.push(...allSuggestions.slice(0, remaining));
+    }
+    
+    // Update the suggestion boxes
+    const suggestionBoxes = suggestionsEl.querySelectorAll('.askchaira-suggestion');
+    suggestionBoxes.forEach((box, index) => {
+      if (currentSuggestions[index]) {
+        box.textContent = currentSuggestions[index];
+        box.setAttribute('data-suggestion', currentSuggestions[index]);
+      }
+    });
+    
+    // Move to next set
+    suggestionSetIndex = (suggestionSetIndex + 1) % Math.ceil(allSuggestions.length / 4);
+  }
 
   const supabaseUrl = (widget.getAttribute('data-supabase-url') || '').trim();
   const anonKey = (widget.getAttribute('data-anon-key') || '').trim();
@@ -36,9 +140,40 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     const bubble = document.createElement('div');
     bubble.className = `askchaira-bubble ${role}`;
-    bubble.textContent = text;
+    
+    // Parse markdown and convert to HTML
+    const htmlContent = parseMarkdown(text);
+    bubble.innerHTML = htmlContent;
+    
     messagesEl.appendChild(bubble);
     messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
+
+  function parseMarkdown(text) {
+    // Simple markdown parser for common formatting
+    let html = text
+      // Bold text: **text** or __text__
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/__(.*?)__/g, '<strong>$1</strong>')
+      // Italic text: *text* or _text_
+      .replace(/\*(.*?)\*/g, '<em>$1</em>')
+      .replace(/_(.*?)_/g, '<em>$1</em>')
+      // Code: `code`
+      .replace(/`(.*?)`/g, '<code>$1</code>')
+      // Links: [text](url)
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
+      // Line breaks: \n to <br>
+      .replace(/\n/g, '<br>')
+      // Lists: - item or * item
+      .replace(/^[\s]*[-*]\s+(.+)$/gm, '<li>$1</li>')
+      // Wrap consecutive list items in <ul>
+      .replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>')
+      // Headers: # Header, ## Header, etc.
+      .replace(/^### (.*$)/gm, '<h3>$1</h3>')
+      .replace(/^## (.*$)/gm, '<h2>$1</h2>')
+      .replace(/^# (.*$)/gm, '<h1>$1</h1>');
+    
+    return html;
   }
 
   function setStatus(text) {
@@ -50,6 +185,9 @@ document.addEventListener('DOMContentLoaded', function() {
   function setLoading(isLoading) {
     if (toggleInput) {
       toggleInput.readOnly = isLoading;
+    }
+    if (overlayInput) {
+      overlayInput.readOnly = isLoading;
     }
   }
 
@@ -82,6 +220,39 @@ document.addEventListener('DOMContentLoaded', function() {
       if (question) {
         console.log('Submitting question...'); // Debug log
         togglePanel(true);
+        await submitQuestion(question);
+      }
+    } else if (event.key === 'Tab') {
+      event.preventDefault();
+      // Type out the current placeholder text
+      const currentPlaceholder = toggleInput.placeholder;
+      if (currentPlaceholder && !toggleInput.value) {
+        toggleInput.value = currentPlaceholder;
+        // Position cursor at the end
+        setTimeout(() => {
+          toggleInput.setSelectionRange(currentPlaceholder.length, currentPlaceholder.length);
+        }, 0);
+      }
+    }
+  });
+
+  overlayInput?.addEventListener('keydown', async (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      const question = overlayInput.value.trim();
+      if (question) {
+        await submitQuestion(question);
+        overlayInput.value = '';
+      }
+    }
+  });
+
+  // Add click listeners to all suggestion boxes
+  suggestionsEl?.addEventListener('click', async (event) => {
+    const suggestion = event.target.closest('.askchaira-suggestion');
+    if (suggestion) {
+      const question = suggestion.getAttribute('data-suggestion');
+      if (question) {
         await submitQuestion(question);
       }
     }
@@ -150,6 +321,9 @@ document.addEventListener('DOMContentLoaded', function() {
         'I couldn&apos;t find an answer to that just yet.';
       appendMessage('assistant', answer);
       setStatus('');
+      
+      // Cycle suggestions after assistant response
+      cycleSuggestions();
     } catch (error) {
       console.error(error);
       appendMessage('assistant', `Sorry, something went wrong. ${error.message}`);
