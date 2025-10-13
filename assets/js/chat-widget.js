@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const statusEl = widget.querySelector('[data-askchaira-status]');
   const overlayInput = widget.querySelector('[data-askchaira-input-overlay]');
   const suggestionsEl = widget.querySelector('[data-askchaira-suggestions]');
+  const clearButton = widget.querySelector('[data-askchaira-clear]');
 
   console.log('Widget elements found:', {
     widget: !!widget,
@@ -126,6 +127,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
   const supabaseUrl = (widget.getAttribute('data-supabase-url') || '').trim();
   const anonKey = (widget.getAttribute('data-anon-key') || '').trim();
+  const SESSION_KEY = 'askkai_session_id';
+  const CHAT_KEY = 'askkai_chat_v1';
+  const DEFAULT_SOURCES = ['website', 'resume', 'about'];
+  let chatTranscript = [];
 
   function supabaseFunctionUrl() {
     if (!supabaseUrl) {
@@ -134,7 +139,86 @@ document.addEventListener('DOMContentLoaded', function() {
     return `${supabaseUrl.replace(/\/$/, '')}/functions/v1/ask`;
   }
 
-  function appendMessage(role, text) {
+  function getSessionId() {
+    try {
+      const existing = localStorage.getItem(SESSION_KEY);
+      if (existing) {
+        return existing;
+      }
+      const generated = crypto.randomUUID();
+      localStorage.setItem(SESSION_KEY, generated);
+      return generated;
+    } catch (error) {
+      console.warn('Unable to access session storage, generating ephemeral session', error);
+      return crypto.randomUUID();
+    }
+  }
+
+  function loadChat() {
+    try {
+      const raw = localStorage.getItem(CHAT_KEY);
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (error) {
+      console.warn('Unable to load stored chat history', error);
+      return [];
+    }
+  }
+
+  function saveChat() {
+    try {
+      localStorage.setItem(CHAT_KEY, JSON.stringify(chatTranscript));
+    } catch (error) {
+      console.warn('Unable to save chat history', error);
+    }
+  }
+
+  function clearChat() {
+    chatTranscript = [];
+    try {
+      localStorage.removeItem(CHAT_KEY);
+    } catch (error) {
+      console.warn('Unable to clear chat history', error);
+    }
+    renderChat();
+  }
+
+  function appendTurn(userText, assistantText) {
+    const timestamp = Date.now();
+    chatTranscript.push({ role: 'user', content: userText, ts: timestamp });
+    chatTranscript.push({ role: 'assistant', content: assistantText, ts: Date.now() });
+    saveChat();
+    renderChat();
+  }
+
+  function getSelectedSources() {
+    const toggles = widget.querySelectorAll('[data-askchaira-source]');
+    if (!toggles.length) {
+      return DEFAULT_SOURCES;
+    }
+    const selected = [];
+    toggles.forEach((toggle) => {
+      const source = toggle.getAttribute('data-askchaira-source');
+      const isActive = toggle.matches('input, textarea, select')
+        ? toggle.checked
+        : toggle.getAttribute('aria-pressed') === 'true' || toggle.classList.contains('is-active');
+      if (isActive && source) {
+        selected.push(source);
+      }
+    });
+    return selected.length ? selected : DEFAULT_SOURCES;
+  }
+
+  function renderChat() {
+    if (!messagesEl) return;
+    messagesEl.innerHTML = '';
+    chatTranscript.forEach((entry, index) => {
+      appendMessage(entry.role, entry.content, index === chatTranscript.length - 1);
+    });
+  }
+
+  function appendMessage(role, text, shouldScroll = true) {
     if (!messagesEl) {
       return;
     }
@@ -146,7 +230,9 @@ document.addEventListener('DOMContentLoaded', function() {
     bubble.innerHTML = htmlContent;
     
     messagesEl.appendChild(bubble);
-    messagesEl.scrollTop = messagesEl.scrollHeight;
+    if (shouldScroll) {
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
   }
 
   function parseMarkdown(text) {
@@ -200,14 +286,11 @@ document.addEventListener('DOMContentLoaded', function() {
     if (shouldOpen) {
       overlay.removeAttribute('hidden');
       toggleInput.setAttribute('aria-expanded', 'true');
+      renderChat();
     } else {
       overlay.setAttribute('hidden', '');
       toggleInput.setAttribute('aria-expanded', 'false');
       toggleInput.value = '';
-      // Clear messages when closing
-      if (messagesEl) {
-        messagesEl.innerHTML = '';
-      }
     }
   }
 
@@ -262,6 +345,11 @@ document.addEventListener('DOMContentLoaded', function() {
     togglePanel(false);
   });
 
+  clearButton?.addEventListener('click', () => {
+    clearChat();
+    setStatus('');
+  });
+
   // Close overlay when clicking outside the panel
   overlay?.addEventListener('click', (event) => {
     if (event.target === overlay) {
@@ -283,13 +371,18 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
+  chatTranscript = loadChat();
+  renderChat();
+  getSessionId();
+
   async function submitQuestion(question) {
+    appendMessage('user', question);
+
     if (!supabaseFunctionUrl()) {
-      appendMessage('assistant', 'The chat service is not configured yet. Please add your Supabase URL (and anon key if required).');
+      appendTurn(question, 'The chat service is not configured yet. Please add your Supabase URL (and anon key if required).');
       return;
     }
 
-    appendMessage('user', question);
     setLoading(true);
     setStatus('Thinking…');
 
@@ -304,7 +397,12 @@ document.addEventListener('DOMContentLoaded', function() {
       const response = await fetch(supabaseFunctionUrl(), {
         method: 'POST',
         headers,
-        body: JSON.stringify({ query: question })
+        body: JSON.stringify({
+          query: question,
+          sources: getSelectedSources(),
+          session_id: getSessionId(),
+          user_label: 'guest'
+        })
       });
 
       const payload = await response.json().catch(() => ({}));
@@ -314,19 +412,28 @@ document.addEventListener('DOMContentLoaded', function() {
         throw new Error(errorMessage);
       }
 
-      const answer =
+      const rawAnswer =
         payload.answer ||
         payload.result ||
         (Array.isArray(payload.choices) && payload.choices[0]?.message?.content) ||
         'I couldn&apos;t find an answer to that just yet.';
-      appendMessage('assistant', answer);
+      const matches = Array.isArray(payload.matches) ? payload.matches : [];
+      const citationLines = matches
+        .map((match, index) => {
+          const label = match?.title || match?.source || `Source ${index + 1}`;
+          const url = match?.url ? ` - ${match.url}` : '';
+          return `[#${index + 1}] ${label}${url}`;
+        })
+        .join('\n');
+      const answer = citationLines ? `${rawAnswer}\n\n${citationLines}` : rawAnswer;
+      appendTurn(question, answer);
       setStatus('');
       
       // Cycle suggestions after assistant response
       cycleSuggestions();
     } catch (error) {
       console.error(error);
-      appendMessage('assistant', `Sorry, something went wrong. ${error.message}`);
+      appendTurn(question, `Sorry, something went wrong. ${error.message}`);
       setStatus('Something went wrong — try again.');
     } finally {
       setLoading(false);

@@ -1400,6 +1400,32 @@ video.img-fluid {
   padding: 1rem 2rem;
 }
 
+.askchaira-controls {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 0 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.askchaira-clear {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  border-radius: 999px;
+  padding: 0.3rem 0.9rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.askchaira-clear:hover,
+.askchaira-clear:focus {
+  background: rgba(121, 196, 232, 0.2);
+  border-color: #79c4e8;
+  outline: none;
+}
+
 .askchaira-suggestions {
   width: 100%;
   max-width: 600px;
