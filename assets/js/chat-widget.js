@@ -261,7 +261,7 @@ document.addEventListener('DOMContentLoaded', function() {
       return `${prefix}<a href="${url}" target="_blank" rel="noopener">${url}</a>`;
     });
 
-    html = html.replace(/\[#(\d+)\]/g, (_match, num) => `<sup class="cite">[${num}]</sup>`);
+    html = html.replace(/\[#(\d+)\]\s*([^,\n]+)/g, (_match, num, text) => `<sup class="cite">[${num}] ${text}</sup>`);
 
     const paragraphs = html.split(/\n{2,}/);
     const withParagraphs = paragraphs

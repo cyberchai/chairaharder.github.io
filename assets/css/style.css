@@ -1369,8 +1369,10 @@ video.img-fluid {
   margin-left: 0.1rem;
   font-weight: normal;
   vertical-align: super;
-  line-height: 1;
+  line-height: 1.2;
   text-decoration: none;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .askchaira-bubble ul {
