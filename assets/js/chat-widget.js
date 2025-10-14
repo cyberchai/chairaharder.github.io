@@ -254,11 +254,11 @@ document.addEventListener('DOMContentLoaded', function() {
     let html = escaped;
 
     // Process citations FIRST, before URL processing
-    // Handle periods correctly: stop at period+space, continue at period+character
-    html = html.replace(/(^|[\s>])\[#(\d+)\]\s*([^,\n<]+?)(?=\s\.\s|\.\s|$)/g, (_match, prefix, num, text) => {
+    // Handle both [#1] and [1] patterns, with periods correctly: stop at period+space, continue at period+character
+    html = html.replace(/(^|[\s>])\[#?(\d+)\]\s*([^,\n<]+?)(?=\s\.\s|\.\s|$)/g, (_match, prefix, num, text) => {
       // Clean up any trailing periods that aren't followed by space
       text = text.replace(/\.$/, '');
-      return `${prefix}<sup class="cite">[${num}] ${text}</sup>`;
+      return `${prefix}<sup class="cite">[#${num}] ${text}</sup>`;
     });
 
     // Then process markdown links
