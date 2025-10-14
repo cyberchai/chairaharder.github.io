@@ -254,7 +254,8 @@ document.addEventListener('DOMContentLoaded', function() {
     let html = escaped;
 
     // Process citations FIRST, before URL processing
-    html = html.replace(/\[#(\d+)\]\s*([^,\n.]+)/g, (_match, num, text) => `<sup class="cite">[${num}] ${text}</sup>`);
+    // More specific regex to avoid matching URLs
+    html = html.replace(/(^|[\s>])\[#(\d+)\]\s*([^,\n.<]+)/g, (_match, prefix, num, text) => `${prefix}<sup class="cite">[${num}] ${text}</sup>`);
 
     // Then process markdown links
     html = html.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, (_match, label, url) => {

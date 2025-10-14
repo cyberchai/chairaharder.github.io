@@ -1376,7 +1376,7 @@ video.img-fluid {
 }
 
 .askchaira-bubble sup.cite {
-  font-size: 0.7em;
+  font-size: 11px !important;
   color: #666666;
   margin-left: 0.1rem;
   font-weight: normal;
@@ -1389,6 +1389,11 @@ video.img-fluid {
   top: 0;
   display: inline-block;
   margin-top: 0.1em;
+}
+
+/* Ensure nested sup elements maintain the same font size */
+.askchaira-bubble sup.cite sup.cite {
+  font-size: 11px !important;
 }
 
 .askchaira-bubble ul {
