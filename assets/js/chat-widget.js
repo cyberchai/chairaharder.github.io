@@ -254,10 +254,10 @@ document.addEventListener('DOMContentLoaded', function() {
     let html = escaped;
 
     // Process citations FIRST, before URL processing
-    // Handle both [#1] and [1] patterns
-    html = html.replace(/\[#?(\d+)\]\s*([^,\n<]+?)(?=\s\.\s|\.\s|$)/g, (_match, num, text) => {
-      // Clean up any trailing periods that aren't followed by space
-      text = text.replace(/\.$/, '');
+    // Match [#1] or [1] followed by text, handle periods in post-processing
+    html = html.replace(/\[#?(\d+)\]\s*([^,\n<]+)/g, (_match, num, text) => {
+      // Remove trailing period if it's followed by space (end of citation)
+      text = text.replace(/\s*\.\s*$/, '');
       return `<sup class="cite">[#${num}] ${text}</sup>`;
     });
 
