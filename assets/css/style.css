@@ -1380,11 +1380,13 @@ video.img-fluid {
   color: #666666;
   margin-left: 0.1rem;
   font-weight: normal;
-  vertical-align: super;
-  line-height: 1.2;
+  vertical-align: baseline;
+  line-height: 1.4;
   text-decoration: none;
   word-break: break-word;
   overflow-wrap: break-word;
+  position: relative;
+  top: -0.2em;
 }
 
 .askchaira-bubble ul {
@@ -1420,7 +1422,8 @@ video.img-fluid {
   word-break: break-word;
   overflow-wrap: break-word;
   max-width: 100%;
-  overflow: hidden;
+  overflow: visible;
+  line-height: 1.5;
 }
 
 .askchaira-bubble p:first-child {
