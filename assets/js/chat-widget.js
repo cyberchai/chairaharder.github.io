@@ -253,15 +253,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
     let html = escaped;
 
+    // Process citations FIRST, before URL processing
+    html = html.replace(/\[#(\d+)\]\s*([^,\n.]+)/g, (_match, num, text) => `<sup class="cite">[${num}] ${text}</sup>`);
+
+    // Then process markdown links
     html = html.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, (_match, label, url) => {
       return `<a href="${url}" target="_blank" rel="noopener">${label}</a>`;
     });
 
+    // Finally process auto-detected URLs
     html = html.replace(/(^|[\s>])(https?:\/\/[^\s<]+)/g, (_match, prefix, url) => {
       return `${prefix}<a href="${url}" target="_blank" rel="noopener">${url}</a>`;
     });
-
-    html = html.replace(/\[#(\d+)\]\s*([^,\n.]+)/g, (_match, num, text) => `<sup class="cite">[${num}] ${text}</sup>`);
 
     const paragraphs = html.split(/\n{2,}/);
     const withParagraphs = paragraphs
