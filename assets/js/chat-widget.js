@@ -254,8 +254,12 @@ document.addEventListener('DOMContentLoaded', function() {
     let html = escaped;
 
     // Process citations FIRST, before URL processing
-    // More specific regex to avoid matching URLs
-    html = html.replace(/(^|[\s>])\[#(\d+)\]\s*([^,\n.<]+)/g, (_match, prefix, num, text) => `${prefix}<sup class="cite">[${num}] ${text}</sup>`);
+    // Handle periods correctly: stop at period+space, continue at period+character
+    html = html.replace(/(^|[\s>])\[#(\d+)\]\s*([^,\n<]+?)(?=\s\.\s|\.\s|$)/g, (_match, prefix, num, text) => {
+      // Clean up any trailing periods that aren't followed by space
+      text = text.replace(/\.$/, '');
+      return `${prefix}<sup class="cite">[${num}] ${text}</sup>`;
+    });
 
     // Then process markdown links
     html = html.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, (_match, label, url) => {
@@ -266,6 +270,9 @@ document.addEventListener('DOMContentLoaded', function() {
     html = html.replace(/(^|[\s>])(https?:\/\/[^\s<]+)/g, (_match, prefix, url) => {
       return `${prefix}<a href="${url}" target="_blank" rel="noopener">${url}</a>`;
     });
+
+    // Process bold markdown **text**
+    html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
 
     const paragraphs = html.split(/\n{2,}/);
     const withParagraphs = paragraphs
