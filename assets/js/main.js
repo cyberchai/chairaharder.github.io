@@ -228,6 +228,23 @@
   });
 
   /**
+   * Initiate video lightbox for resume section
+   */
+  const videoLightbox = GLightbox({
+    selector: '.video-lightbox',
+    autoplayVideos: true,
+    autofocusVideos: true,
+    afterSlideLoad: function() {
+      // Ensure the video is unmuted (volume on) when it loads in the modal
+      const video = document.querySelector('.gslide-video video');
+      if (video) {
+        video.muted = false;
+        video.volume = 1.0;
+      }
+    }
+  });
+
+  /**
    * Portfolio details slider
    */
   new Swiper('.portfolio-details-slider', {
