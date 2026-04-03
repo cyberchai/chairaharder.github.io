@@ -429,6 +429,12 @@ section .container {
   line-height: 0;
 }
 
+@media (min-width: 992px) {
+  .about-me .content ul li.about-linkedin-row > span {
+    white-space: nowrap;
+  }
+}
+
 .about-me .content p:last-child {
   margin-bottom: 0;
 }

@@ -8,6 +8,6 @@ Outside of my professional projects, I'm an enthusiastic athlete who never turns
 
 ## Quick Facts
 
-- Located: New York City
+- Located: UN
 - Email: chairachananharder@gmail.com
 - Interests: community-centered innovation, entrepreneurship, finance, space systems, athletics
