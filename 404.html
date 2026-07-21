@@ -22,6 +22,7 @@
 
   <title>404 - Chai Not Found | Chaira Harder</title>
   <meta content="The page you're looking for doesn't exist." name="description">
+  <meta name="robots" content="noindex">
 
   <!-- Favicons -->
   <link href="assets/img/favicon_io/favicon-32x32.png" rel="icon">
@@ -43,10 +44,12 @@
 
 </head>
 
-<body>
+<body data-page-type="404">
 
   <!-- ======= Header ======= -->
-  <header id="header">
+  <!-- header-top collapses the hero to a bar; main.js only does this in response to a
+       nav click, and there is no such click on this page, so it is set in the markup. -->
+  <header id="header" class="header-top">
     <div class="container">
 
       <h1><a href="index.html">Chaira Harder</a></h1>
@@ -74,7 +77,9 @@
   </header><!-- End Header -->
 
   <!-- ======= 404 Section ======= -->
-  <section id="notfound" class="about">
+  <!-- section-show is required: every section is opacity:0 until it gets this class,
+       and main.js only adds it for #hash nav links, which this page has none of. -->
+  <section id="notfound" class="about section-show">
     <div class="container">
       <div class="section-title" style="padding-top: 100px;">
         <h1 style="font-size: 8rem; font-weight: bold; color: #149ddd; margin-bottom: 20px;">404</h1>
