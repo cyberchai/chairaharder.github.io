@@ -7,17 +7,9 @@
   <!-- Homepage -->
   <url>
     <loc>https://chairaharder.com/</loc>
-    <lastmod>2026-07-21</lastmod>
+    <lastmod>2026-11-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
-  </url>
-
-  <!-- Portfolio Details -->
-  <url>
-    <loc>https://chairaharder.com/portfolio-details.html</loc>
-    <lastmod>2026-07-21</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
   </url>
 
 </urlset>

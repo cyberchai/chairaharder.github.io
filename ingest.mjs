@@ -31,7 +31,7 @@ const config = {
 };
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const DEFAULT_RESUME_PATH = path.resolve(__dirname, 'Chaira_Harder_Resume.pdf');
+const DEFAULT_RESUME_PATH = path.resolve(__dirname, 'assets/img/ChairaHarderResume.pdf');
 const DEFAULT_ABOUT_PATH = path.resolve(__dirname, 'about-me.md');
 
 const CHUNK_SIZE = 4000;
@@ -445,7 +445,7 @@ async function main() {
     await ingestGroup('resume', [
       {
         title: 'Chaira Harder Resume',
-        url: '/Chaira_Harder_Resume.pdf',
+        url: '/assets/img/ChairaHarderResume.pdf',
         text: resumeText
       }
     ]);

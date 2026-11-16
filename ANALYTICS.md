@@ -4,7 +4,7 @@ Everything on the code side is done. This file covers the parts that have to be
 configured in the Google Analytics UI, plus what each event means.
 
 **Property:** GA4, measurement ID `G-Q7Q0FR57TJ`
-**Tracking code:** `assets/js/analytics.js`, loaded on `index.html`, `portfolio-details.html`, `404.html`
+**Tracking code:** `assets/js/analytics.js`, loaded on `index.html` and `404.html`
 
 ---
 

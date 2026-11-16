@@ -1,0 +1,20 @@
+# GitHub Pages (Jekyll) build settings.
+# Keeps internal and tooling files in the repo but off the public site.
+# Note: on GitHub Pages' Jekyll 3, this list REPLACES Jekyll's default excludes,
+# so the defaults (node_modules, Gemfile, vendor/...) are repeated here.
+exclude:
+  - node_modules
+  - Gemfile
+  - Gemfile.lock
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
+  - package.json
+  - package-lock.json
+  - ingest.mjs
+  - askchaira.txt
+  - body.json
+  - sendmail.php
+  - ANALYTICS.md
+  - README.md
